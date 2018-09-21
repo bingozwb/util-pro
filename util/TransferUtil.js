@@ -2,14 +2,6 @@ const {web3, property, sendSignedTx, sendSignedTxHelper} = require('./contractUt
 
 const contractJson = require('../active-contract/MyToken.json')
 const contractAbi = contractJson.abi
-const contractAddr = ''
-const contract = new web3.eth.Contract(contractAbi, contractAddr)
-
-async function deploy() {
-    const contract = new web3.eth.Contract(contractAbi)
-    const token = await contract.deploy({data: contractJson.bytecode}).send({from: property.from, gasLimit: property.gasLimit}).then(console.log)
-    console.log('token', token)
-}
 
 async function batchTransferETH(accounts, to) {
     for (const account of accounts) {
@@ -29,6 +21,7 @@ async function batchTransferETH(accounts, to) {
 }
 
 async function batchTransferToken(accounts, to, tokenAddress) {
+    // get contract instance by token contract abi and address
     const contract = new web3.eth.Contract(contractAbi, tokenAddress)
 
     for (const account of accounts) {
@@ -43,6 +36,7 @@ async function batchTransferToken(accounts, to, tokenAddress) {
             const ethBalance = await web3.eth.getBalance(from)
             const txFee = gasLimit * gasPrice
             if (ethBalance < txFee) {
+                // transfer txFee to this account from 'property.pk'
                 await sendSignedTxHelper(from, null, txFee - ethBalance, property.pk)
             }
 
@@ -50,27 +44,3 @@ async function batchTransferToken(accounts, to, tokenAddress) {
         }
     }
 }
-
-async function test() {
-    const accounts = [
-        {address: '', pk: '0x'},
-        {address: '', pk: '0x'},
-        {address: '', pk: '0x'}
-    ]
-    const to = ''
-
-    // await batchTransferETH(accounts, to)
-
-    // await deploy()
-
-    await batchTransferToken(accounts, to, contractAddr)
-
-    for (acc of accounts) {
-        const data = contract.methods.transfer(acc.address, web3.utils.toWei('1', 'ether')).encodeABI()
-        await sendSignedTxHelper(contractAddr, data, 0, property.pk)
-        await contract.methods.balanceOf(acc.address).call().then(console.log)
-    }
-    await contract.methods.balanceOf(to).call().then(console.log)
-}
-
-// test()
