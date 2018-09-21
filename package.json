@@ -1,0 +1,12 @@
+{
+  "name": "util-pro",
+  "version": "1.0.0",
+  "description": "ethereum util project",
+  "scripts": {},
+  "author": "bingo",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {
+    "web3": "^1.0.0-beta.36"
+  }
+}
