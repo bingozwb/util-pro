@@ -6,9 +6,6 @@ let property = properties.development
 const Web3 = require('web3')
 const web3 = new Web3(new Web3.providers.HttpProvider(property.url))
 
-// web3.setProvider(new Web3.providers.HttpProvider(property.url))
-
-
 async function sendSignedTx(to, data, nonce, value, gasPrice, gasLimit, from, pk) {
     console.debug('nonce', nonce)
     console.debug('gasPrice', gasPrice)
@@ -42,7 +39,6 @@ async function sendSignedTxSimple(to, data) {
     const nonce = await web3.eth.getTransactionCount(property.from)
     const gasPrice = await web3.eth.getGasPrice()
     const gasLimit = data ? await contractEstimateGas(property.from, to, data) : 21000
-    // const gasLimit = 4100000
     return await sendSignedTx(to, data, nonce, 0, gasPrice, gasLimit, property.from, property.pk)
 }
 
