@@ -6,6 +6,11 @@ let property = properties.development
 const Web3 = require('web3')
 const web3 = new Web3(new Web3.providers.HttpProvider(property.url))
 
+async function deploy(contractAbi, contractBytecode) {
+    const contract = new web3.eth.Contract(contractAbi)
+    return (await contract.deploy({data: contractBytecode}).send({from: property.from, gasLimit: property.gasLimit}))._address
+}
+
 async function sendSignedTx(to, data, nonce, value, gasPrice, gasLimit, from, pk) {
     console.debug('nonce', nonce)
     console.debug('gasPrice', gasPrice)
@@ -67,6 +72,7 @@ function getMsgHash(msg) {
 module.exports = {
     web3: web3,
     property: property,
+    deploy: deploy,
     sendSignedTx: sendSignedTx,
     sendSignedTxHelper: sendSignedTxHelper,
     sendSignedTxSimple: sendSignedTxSimple,
