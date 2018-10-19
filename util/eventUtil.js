@@ -15,8 +15,8 @@ module.exports = {
     return events
   },
 
-  decodeLog: function (eventAbi, log) {
-    const topics = eventAbi.anonymous ? log.topics : log.topics.slice(1)
-    return web3.eth.abi.decodeLog(eventAbi.inputs, log.data, topics)
+  decodeLog: function (_eventAbi, _log) {
+    const topics = _eventAbi.anonymous ? _log.topics : _log.topics.slice(1)
+    return web3.eth.abi.decodeLog(_eventAbi.inputs, _log.data, topics)
   }
 }
