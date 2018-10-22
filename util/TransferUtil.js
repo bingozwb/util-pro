@@ -1,6 +1,6 @@
 const {web3, sendSignedTx, sendSignedTxHelper, deploy} = require('./contractUtil.js')
 
-const contractJson = require('../active-contract/MyToken.json')
+const contractJson = require('../active-contract/StandardToken.json')
 const contractAbi = contractJson.abi
 let poorAccounts = []
 let gasPrice
