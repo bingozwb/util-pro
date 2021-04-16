@@ -3,9 +3,12 @@ const property = require('./properties.js')
 const Web3 = require('web3')
 const web3 = new Web3(property.url)
 
+// const provider = new HDWalletProvider('mnemonic', property.url);
+// const web3 = new Web3(provider);
+
 async function deploy(_contractAbi, _contractBytecode, _pk, _value) {
   const contract = new web3.eth.Contract(_contractAbi)
-  const deploy = contract.deploy({data: _contractBytecode})
+  const deploy = contract.deploy({data: _contractBytecode, arguments: _args})
   const data = deploy.encodeABI()
   const gasLimit = await deploy.estimateGas()
   const from = await web3.eth.accounts.privateKeyToAccount(_pk).address
@@ -43,6 +46,11 @@ async function sendSignedTxHelper(_to, _data, _value, _pk, _nonce) {
   return await sendSignedTx(_to, _data, nonce, _value, gasPrice, gasLimit, from, _pk)
 }
 
+async function sendSignedTxSimple(_to, _data) {
+  const nonce = await web3.eth.getTransactionCount(property.from)
+  return await sendSignedTx(_to, _data, nonce, 0, property.gasPrice, property.gasLimit, property.from, property.pk)
+}
+
 async function estimateGas(_from, _to, _data, _value) {
   if (!_value) {
     _value = 0
@@ -78,12 +86,29 @@ async function evmMine() {
   })
 }
 
+function getString(hexString) {
+  return web3.utils.hexToString(hexString)
+}
+
+function getBytes(string) {
+  return web3.utils.asciiToHex(string)
+}
+
+function getMsgHash(msg) {
+  return web3.utils.sha3('\x19Ethereum Signed Message:\n' + msg.length + msg)
+}
+
 module.exports = {
   web3: web3,
+  property: property,
   deploy: deploy,
   sendSignedTx: sendSignedTx,
   sendSignedTxHelper: sendSignedTxHelper,
+  sendSignedTxSimple:sendSignedTxSimple,
   estimateGas: estimateGas,
   coverTx: coverTx,
-  evmMine: evmMine
+  evmMine: evmMine,
+  getString: getString,
+  getBytes: getBytes,
+  getMsgHash:getMsgHash
 }
